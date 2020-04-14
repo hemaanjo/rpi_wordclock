@@ -286,34 +286,3 @@ class wordclock_display:
         """
         self.strip.show()
 
-    def ambilightInfo(self):
-        '''
-        Info zu Ambilight as string
-        '''
-        ambStart = self.AmbiStart() #self.wcl.WCA_WIDTH*self.wcl.WCA_HEIGHT) + 4 - 1
-        ambCount = self.wcl.LED_COUNT - ambStart - 1
-        return 'Ai: ' + str(ambStart) + ' Ac: ' + str(ambCount)
-
-    def AmbiStart(self):
-        '''
-        Startindex von Ambilight
-        '''
-        return ((self.wcl.WCA_WIDTH*self.wcl.WCA_HEIGHT) + 4) #-1)
-
-    def AmbiCount(self):
-        '''
-        Anzahl der Ambi LED'S
-        '''
-        return (self.wcl.LED_COUNT - self.AmbiStart()) #-1)
-
-    def AmbiLED(self, idxZeroBased, color):
-        '''
-        setze Pixel 0 indiziert
-        '''
-        self.setPixelColor(self.AmbiStart()+idxZeroBased, color)
-
-    def setSeconds(self, time, color):
-        numAmbi = AmbiCount()
-        print('setSecond ' + str(time.second) + ' ' + str(numAmbi))
-
-

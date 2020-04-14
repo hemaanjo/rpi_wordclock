@@ -20,14 +20,16 @@ class wiring:
         stencil_content = ast.literal_eval(config.get('language_options', language))
         self.WCA_HEIGHT = len(stencil_content)
         self.WCA_WIDTH = len(stencil_content[0].decode('utf-8'))
-        self.LED_COUNT = self.WCA_WIDTH * self.WCA_HEIGHT + 4  # Number of LED pixels.
-        self.LED_PIN = 18  # GPIO pin connected to the pixels (must support PWM!).
+        self.LED_COUNT = self.WCA_WIDTH * self.WCA_HEIGHT + 120 + 4  # Number of LED pixels.
+        self.LED_PIN = 12  # GPIO pin connected to the pixels (must support PWM!).
         self.LED_FREQ_HZ = 800000  # LED signal frequency in hertz (usually 800khz)
         self.LED_DMA = 10  # DMA channel to use for generating signal
         self.LED_INVERT = False  # True to invert the signal (when using NPN transistor level shift)
         wiring_layout = config.get('wordclock_display', 'wiring_layout')
 
         print('Wiring configuration')
+	print('  language=' + language)
+	print('  layout=' + wiring_layout)
         print('  WCA_WIDTH: ' + str(self.WCA_WIDTH))
         print('  WCA_HEIGHT: ' + str(self.WCA_HEIGHT))
         print('  Num of LEDs: ' + str(self.LED_COUNT))
@@ -36,6 +38,8 @@ class wiring:
         if config.getboolean('wordclock', 'developer_mode'):
             self.wcl = gtk_wiring(self.WCA_WIDTH, self.WCA_HEIGHT)
             print('Developer mode overwrites wiring layout to gtk_wiring!')
+	elif wiring_layout == 'joda_wiring':
+	    self.wcl = joda_wiring(self.WCA_WIDTH, self.WCA_HEIGHT)
         elif wiring_layout == 'bernds_wiring':
             self.wcl = bernds_wiring(self.WCA_WIDTH, self.WCA_HEIGHT)
         elif wiring_layout == 'christians_wiring':
@@ -84,6 +88,50 @@ class wiring:
         Access minutes (1,2,3,4)
         """
         return self.wcl.mapMinutes(min)
+
+class joda_wiring:
+
+    def __init__(self, WCA_WIDTH, WCA_HEIGHT):
+        self.WCA_WIDTH   = WCA_WIDTH
+        self.WCA_HEIGHT  = WCA_HEIGHT
+        #self.AMBILED_COUNT = 120
+        self.LED_COUNT   = self.WCA_WIDTH*self.WCA_HEIGHT+4+120
+
+
+    def getStripIndexFrom2D(self, x, y):
+        '''
+        Mapping coordinates to the wordclocks display
+        Needs hardware/wiring dependent implementation
+        Final range:
+             (0,0): top-left
+             (self.WCA_WIDTH-1, self.WCA_HEIGHT-1): bottom-right
+        '''
+        if y%2 == 0:
+                pos = 4+x+(self.WCA_WIDTH*y)
+        else:
+                pos = 4+(self.WCA_WIDTH*y)+(self.WCA_WIDTH-1)-x
+        #       pos = 4+x+(self.WCA_WIDTH*y)
+        #print('my2D ' + str(x) + ' , ' + str(y) + ' ' + str(pos))
+        return pos
+
+
+    def mapMinutes(self, min):
+        '''
+        minutes
+        '''
+        #print('MinuteIDX=' + str(min))
+        if min == 1:
+            return 0
+        elif min == 2:
+            return 1
+        elif min == 3:
+            return 2
+        elif min == 4:
+            return 3
+        else:
+            print('WARNING: Out of range, when mapping minutes...')
+            print(min)
+            return 0
 
 
 class bernds_wiring:

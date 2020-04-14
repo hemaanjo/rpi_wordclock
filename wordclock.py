@@ -81,7 +81,7 @@ class wordclock:
                     raise
                 self.plugins.append(import_module('wordclock_plugins.' + plugin + '.plugin').plugin(self.config))
                 # Search for default plugin to display the time
-                if plugin == 'time_default':
+                if plugin == 'clock2':
                     print('  Selected "' + plugin + '" as default plugin')
                     self.default_plugin = index
                 print('Imported plugin ' + str(index) + ': "' + plugin + '".')
