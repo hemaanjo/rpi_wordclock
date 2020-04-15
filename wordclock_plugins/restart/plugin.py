@@ -23,5 +23,6 @@ class plugin:
         wcd.showText("Restarting...    ")
         wcd.showIcon(plugin=self.name, iconName='logo')
         os.system("shutdown now -r")
+	# get nicht ;-( os.exec(sys.executable, ['python'] + sys.argv)
         time.sleep(10)
         return

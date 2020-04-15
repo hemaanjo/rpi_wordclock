@@ -102,8 +102,12 @@ class GTKstrip(threading.Thread):
     def update(self):
         for label, color in zip(self.labels, self.colors):
             attrs = label.get_attributes()
-            attrs.change(pango.AttrForeground(int(color.r / 255.0 * 65535), int(color.g / 255.0 * 65535),
-                                              int(color.b / 255.0 * 65535)));
+	    b = (color & 0x000000FF)
+	    g = (color & 0x0000FF00) >> 8
+	    r = (color & 0x00FF0000) >> 16
+	    a = (color & 0xFF000000) >> 24
+            attrs.change(pango.AttrForeground(int(r / 255.0 * 65535), int(g / 255.0 * 65535),
+                                              int(b / 255.0 * 65535)));
             label.set_attributes(attrs)
 
     def show(self):
