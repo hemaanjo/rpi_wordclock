@@ -43,7 +43,8 @@ class wordclock_display:
         if config.getboolean('wordclock', 'developer_mode'):
             from GTKstrip import GTKstrip
             self.strip = GTKstrip(wci)
-            self.default_font = 'wcfont.ttf'
+            #self.default_font = 'wcfont.ttf'
+	    self.default_font = 'COUR.TTF'
         else:
             try:
                 from neopixel import Adafruit_NeoPixel, ws
