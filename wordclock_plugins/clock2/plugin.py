@@ -1,3 +1,4 @@
+import ConfigParser
 import logging
 import datetime
 import os
@@ -22,6 +23,25 @@ class plugin:
         self.name = os.path.dirname(__file__).split('/')[-1]
         self.pretty_name = "Clock 2"
         self.description = "The one and only ;-)"
+
+	# UserPrefs
+	self.prefsName = self.name + '.ini'
+	self.confPrefs = ConfigParser.ConfigParser()
+	if not os.path.exists(self.prefsName):
+		print(' noPrefs=' + self.prefsName)
+		#self.confPrefs = ConfigParser.ConfigParser()
+		self.confPrefs.add_section('Words')
+		self.confPrefs.set('Words','red','255')
+		self.confPrefs.set('Words','green','0')
+		self.confPrefs.set('Words','blue','0')
+		with open(self.prefsName, 'w') as configfile:
+			self.confPrefs.write(configfile)
+
+	self.confPrefs.read(self.prefsName)
+
+	#self.word_color = wcc.Color(self.confPrefs.getint('Words','red'), self.confPrefs.getint('Words','green'), self.confPrefs.getint('Words','blue'))
+
+
 
         # typewriter effect
         try:
@@ -65,7 +85,7 @@ class plugin:
             self.sleep_brightness = 5
             print('  No sleep brightness set within the config-file. Defaulting to ' + str(
                 self.sleep_brightness) + '.')
-        
+
         # if left/right button is pressed during sleep cycle, the current sleep cycle is skipped for the rest of the night
         # to allow manual override
         self.skip_sleep = False
@@ -121,10 +141,10 @@ class plugin:
             nowtime = datetime.time(now.hour,now.minute,0)
             if not (self.sleep_begin == self.sleep_end):
                 if ((self.sleep_begin <= nowtime) and ((nowtime <= self.sleep_end) or (nowtime <= datetime.time(23,59,59))) or (datetime.time(0,0,0) <= nowtime <= self.sleep_end)):  # skip if color/brightness change has been done during the current sleep cycle
-                    if not self.skip_sleep: 
+                    if not self.skip_sleep:
                         self.brightness_mode_pos = self.sleep_brightness
                         self.sleep_switch = True  # brightness has been changed
-                    self.is_sleep = True 
+                    self.is_sleep = True
                 else:
                     self.brightness_mode_pos = self.wake_brightness
                     self.sleep_switch = True  # brightness has been changed
@@ -143,7 +163,7 @@ class plugin:
             # Switch display color, if button_left is pressed
             if event == wci.EVENT_BUTTON_LEFT:
                 if self.is_sleep:    # if button is pressed during sleep cycle, allow override until next sleep cycle
-                    self.skip_sleep = True 
+                    self.skip_sleep = True
                 self.color_mode_pos += 1
                 if self.color_mode_pos == len(self.color_modes):
                     self.color_mode_pos = 0
