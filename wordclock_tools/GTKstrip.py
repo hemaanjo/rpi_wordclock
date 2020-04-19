@@ -25,6 +25,8 @@ class GTKstrip(threading.Thread):
         self.label = "GTKstrip"
 
         chars = "ESKISTLFÜNFZEHNZWANZIGDREIVIERTELTGNACHVORJMHALBQZWÖLFPZWEINSIEBENKDREIRHFÜNFELFNEUNVIERWACHTZEHNRSBSECHSFMUHR...."
+	#chars = chars + "------------------------------------------------------------"
+	#chars = chars + "------------------------------------------------------------"
 
         self.labels = []
         self.colors = []
@@ -57,7 +59,8 @@ class GTKstrip(threading.Thread):
             attrs = pango.AttrList()
             # attrs.insert(pango.AttrLanguage("de"))
             attrs.insert(pango.AttrForeground(0, 0, 0))
-            attrs.insert(pango.AttrSize(30 * 1000))
+	    FONTSIZE=15
+            attrs.insert(pango.AttrSize(FONTSIZE * 1000))
             attrs.insert(pango.AttrBackground(0, 0, 0))
             label.set_attributes(attrs)
 

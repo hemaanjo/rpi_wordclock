@@ -33,6 +33,9 @@ class plugin:
         self.log.addHandler(loghandle)
         self.log.info('INIT')
 
+	# ambilight
+	self.ambilight = False
+
         # Choose language
         language = config.get('plugin_' + self.name, 'language')
         if language == 'joda':
@@ -42,17 +45,69 @@ class plugin:
             print(self.name + 'Choosing default: german')
             self.taw = time_german.time_german()
 
+        # typewriter effect
         try:
             self.typewriter = config.getboolean('plugin_' + self.name, 'typewriter')
         except:
-            print('  No typewriter-flag set for default plugin within the config-file. Typewriter animation will be used.')
+            print(
+            '  No typewriter-flag set for default plugin within the config-file. Typewriter animation will be used.')
             self.typewriter = True
 
         try:
             self.typewriter_speed = config.getint('plugin_' + self.name, 'typewriter_speed')
         except:
             self.typewriter_speed = 5
-            print('  No typewriter_speed set for default plugin within the config-file. Defaulting to ' + str(self.typewriter_speed) + '.')
+            print('  No typewriter_speed set for default plugin within the config-file. Defaulting to ' + str(
+                self.typewriter_speed) + '.')
+
+	try:
+            self.purist = config.getboolean('plugin_time_default', 'purist')
+        except:
+            print('  No purist-flag set for default plugin within the config-file. Prefix will be displayed.')
+            self.purist = False
+
+        # sleep mode
+        try:
+            self.sleep_begin = datetime.time(config.getint('plugin_' + self.name, 'sleep_begin_hour'),config.getint('plugin_' + self.name, 'sleep_begin_minute'),0)
+        except:
+            self.sleep_begin = datetime.time(0,0,0)
+            self.sleep_end = datetime.time(0,0,0)
+            print('  No sleeping time set, display will stay bright 24/7.')
+
+        try:
+            self.sleep_end = datetime.time(config.getint('plugin_' + self.name, 'sleep_end_hour'),config.getint('plugin_' + self.name, 'sleep_end_minute'),0)
+        except:
+            self.sleep_begin = datetime.time(0,0,0)
+            self.sleep_end = datetime.time(0,0,0)
+            print('  No sleeping time set, display will stay bright 24/7.')
+
+        try:
+            self.sleep_brightness = config.getint('plugin_' + self.name, 'sleep_brightness')
+        except:
+            self.sleep_brightness = 5
+            print('  No sleep brightness set within the config-file. Defaulting to ' + str(
+                self.sleep_brightness) + '.')
+
+        # if left/right button is pressed during sleep cycle, the current sleep cycle is skipped for the rest of the night
+        # to allow manual override
+        self.skip_sleep = False
+        self.is_sleep = False
+
+        # monitor sleep mode changes to apply brightness
+        self.sleep_switch = False
+
+
+#        try:
+#            self.typewriter = config.getboolean('plugin_' + self.name, 'typewriter')
+#        except:
+#            print('  No typewriter-flag set for default plugin within the config-file. Typewriter animation will be used.')
+#            self.typewriter = True
+#
+#        try:
+#            self.typewriter_speed = config.getint('plugin_' + self.name, 'typewriter_speed')
+#        except:
+#            self.typewriter_speed = 5
+#            print('  No typewriter_speed set for default plugin within the config-file. Defaulting to ' + str(self.typewriter_speed) + '.')
 
         self.bg_color     = wcc.BLACK  # default background color
         self.word_color   = wcc.WWHITE # default word color
@@ -92,8 +147,11 @@ class plugin:
 	prev_seconds = -1
 	ac = wcd.AmbiCount()
 
-	print('acounter = ' + str(ac))
-        deltaSecond = 60 / ac
+	if self.ambilight = True:
+		print('acounter = ' + str(ac))
+        	deltaSecond = 60 / ac
+	else
+		print('acounter = 0')
 
 	while True:
             # Get current time
@@ -105,16 +163,16 @@ class plugin:
                 self.show_time(wcd, wci)
                 prev_min = -1 if now.minute == 59 else now.minute
             ###event = wci.waitForEvent(1)
-	    #if self.ambilight = True:
-            if prev_seconds < now.second:
-		if deltaSecond >= 1:
-            		if now.second % deltaSecond == 0:
-            			self.show_second(wcd, wci, now.second)
-				prev_seconds = -1 if now.second == 59 else now.second
-		else:
-			#print(str(now.second))
-			self.show_second(wcd, wci, now.second, ac)
-	        	prev_seconds = -1 if now.second == 59 else now.second
+	    if self.ambilight = True:
+            	if prev_seconds < now.second:
+			if deltaSecond >= 1:
+            			if now.second % deltaSecond == 0:
+            				self.show_second(wcd, wci, now.second)
+					prev_seconds = -1 if now.second == 59 else now.second
+				else:
+					#print(str(now.second))
+					self.show_second(wcd, wci, now.second, ac)
+		        		prev_seconds = -1 if now.second == 59 else now.second
             #print('sec=' +  str(prev_seconds))
 	    event = wci.waitForEvent(1) # original 1 - 0.9 ok
 	    #else:
