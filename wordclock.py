@@ -40,6 +40,13 @@ class wordclock:
         # to other classes/plugins for further usage
         self.config.set('wordclock', 'base_path', self.basePath)
 
+	# default_pluginName
+	try:
+		self.default_pluginName=self.config.get('wordclock','default_plugin')
+	except:
+		print(' No default_plugin defined in Section wordclock')
+		self.default_pluginName = 'time_default'
+
         self.developer_mode_active = self.config.getboolean('wordclock', 'developer_mode')
 
         # Create object to interact with the wordclock using the interface of your choice
@@ -82,8 +89,8 @@ class wordclock:
                 self.plugins.append(import_module('wordclock_plugins.' + plugin + '.plugin').plugin(self.config))
                 # Search for default plugin to display the time
 		# if plugin == 'clock2':
-		if plugin == 'time_default':
-                    print('  Selected "' + plugin + '" as default plugin')
+		if plugin == self.default_pluginName:
+                    print('  Selected "' + plugin + '" as default plugin' + ' DEFAULTNAME=' + self.default_pluginName)
                     self.default_plugin = index
                 print('Imported plugin ' + str(index) + ': "' + plugin + '".')
                 index += 1
