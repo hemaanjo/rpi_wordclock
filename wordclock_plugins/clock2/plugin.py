@@ -163,6 +163,7 @@ class plugin:
                 self.show_time(wcd, wci)
                 prev_min = -1 if now.minute == 59 else now.minute
             ###event = wci.waitForEvent(1)
+        self.log.INFO("ambilight=" & self.ambilight)
 	    if self.ambilight = True:
             	if prev_seconds < now.second:
 			if deltaSecond >= 1:
